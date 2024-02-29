@@ -17,7 +17,8 @@ class Player(Sprite):
         self.hp = 3
         self.coin = 0
         self.image = pg.Surface((TILESIZE,TILESIZE))
-        self.image.fill(RED)
+        # self.image.fill(RED)
+        self.image = game.player_img
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
         self.x = x * TILESIZE
