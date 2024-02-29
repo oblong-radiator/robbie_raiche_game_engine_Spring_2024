@@ -31,6 +31,7 @@ class Game:
         self.walls = pg.sprite.Group()
         self.coins = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
+        self.collision = pg.sprite.Group()
         # for x in range (10, 20):
         #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
@@ -42,7 +43,7 @@ class Game:
                 if tile == '1':
                     Wall(self, col, row)
                 if tile == "P":
-                    self.player = Player(self,col,row,3,0)
+                    self.player = Player(self,col,row)
                 if tile == "C":
                     Coin(self,col,row)
                 if tile == "E":
@@ -70,10 +71,20 @@ class Game:
         for y in range(0, WIDTH, TILESIZE):
             pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
+    def draw_text(self, surface, text, size, color, x, y):
+        font_name = pg.font.match_font('arial')
+        font = pg.font.Font(font_name, size)
+        text_surface = font.render(text, True, color)
+        text_rect = text_surface.get_rect()
+        text_rect.topleft = (x*TILESIZE,y*TILESIZE)
+        surface.blit(text_surface, text_rect)
+
     def draw(self): # draw the background and the grid and all the sprites
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
+        self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, YELLOW, 1, 1)
+        self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, LIGHTGREY, 1, 3)
         pg.display.flip()
 
     # define input methods

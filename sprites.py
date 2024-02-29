@@ -10,12 +10,12 @@ from settings import *
 # Capitalize the class name. It's the LAW!!
 class Player(Sprite):
 # This makes the player class a subclass of Sprite, imported from Pygame. Now the player class can do everything that Sprite module class thing can do.
-    def __init__(self,game,x,y,hp,coin): 
-        self.groups = game.all_sprites
+    def __init__(self,game,x,y): 
+        self.groups = game.all_sprites, game.collision
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.hp = hp
-        self.coin = coin
+        self.hp = 3
+        self.coin = 0
         self.image = pg.Surface((TILESIZE,TILESIZE))
         self.image.fill(RED)
         self.rect = self.image.get_rect()
@@ -62,16 +62,13 @@ class Player(Sprite):
                 self.vy = 0
                 self.rect.y = self.y
             
-    def collide_with_obj(self, group, kill, desc):
+    def collide_with_obj(self, group, kill):
         hits = pg.sprite.spritecollide(self, group, kill)
-        if hits and desc == "coin":
-           print("I collided with coin")
-           self.coin +=1
-           print("you have", str(self.coin), "coins")
-        if hits and desc == "enemy":
-           print("I collided with enemy")
-           self.hp -= 1
-           print("you have", str(self.hp), "hp") 
+        if hits:
+            if str(hits[0].__class__.__name__) == "Coin":
+                self.coin += 1
+            if str(hits[0].__class__.__name__) == "Enemy":
+                self.hp -= 1
            
     def update(self):
         # self.rect.x = self.x * TILESIZE
@@ -83,21 +80,21 @@ class Player(Sprite):
        self.collide_with_walls('x')
        self.rect.y = self.y
        self.collide_with_walls('y')
-       self.collide_with_obj(self.game.coins, True, "coin")
-       self.collide_with_obj(self.game.enemies, True, "enemy")
+       self.collide_with_obj(self.game.coins, True)
+       self.collide_with_obj(self.game.enemies, False)
 
 
 class Wall(Sprite):
 
     def __init__(self, game, x, y): 
-        self.groups = game.all_sprites, game.walls
+        self.groups = game.all_sprites, game.walls, game.collision
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE,TILESIZE))
         self.image.fill(WALLCOLOR)
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE 
         self.rect.x = x * TILESIZE
         self.rect.y = y * TILESIZE
 
@@ -122,7 +119,44 @@ class Enemy(Sprite): # dis a copy of the other class
         self.image = pg.Surface((TILESIZE, TILESIZE))
         self.image.fill(LIGHTGREY)
         self.rect = self.image.get_rect()
-        self.x = x
-        self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.rect.x = x
+        self.rect.y = y
+        self.vx = ENEMY_SPEED
+        self.vy = ENEMY_SPEED
+        if self.vx != 0 and self.vy != 0:
+            self.vx *= 0.7071               # MATH!!
+            self.vy *= 0.7071
+
+    def collide_with_obj(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.collision, False)
+            if hits:
+                if self.vx > 0:
+                    self.x = hits[0].rect.left - self.rect.width
+                if self.vx <0:
+                    self.x = hits[0].rect.right
+                self.vx = -self.vx
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.collision, False)
+            if hits:
+                if self.vy > 0:
+                    self.y = hits[0].rect.top - self.rect.width
+                if self.vy <0:
+                    self.y = hits[0].rect.bottom
+                self.vy = -self.vy
+                self.rect.y = self.y
+
+
+
+    def update(self):
+        # self.rect.x = self.x * TILESIZE
+        # self.rect.y =  self.y * TILESIZE
+       self.x += self.vx * self.game.dt
+       self.y += self.vy * self.game.dt
+       self.rect.x = self.x
+       self.collide_with_obj('x')
+       self.rect.y = self.y 
+       self.collide_with_obj('y')
