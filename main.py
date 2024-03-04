@@ -1,5 +1,7 @@
 # This file was created by Robbie Raiche
 
+# game timer, different game levels, hp kills (stuff for thing)
+
 # My first source control edit!!1!!1!!
 # Import stuff
 import sys
