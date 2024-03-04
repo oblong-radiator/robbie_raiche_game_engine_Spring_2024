@@ -81,7 +81,7 @@ class Player(Sprite):
        self.rect.y = self.y
        self.collide_with_walls('y')
        self.collide_with_obj(self.game.coins, True)
-       self.collide_with_obj(self.game.enemies, False)
+       self.collide_with_obj(self.game.enemies, True)
 
 
 class Wall(Sprite):
@@ -131,7 +131,7 @@ class Enemy(Sprite): # dis a copy of the other class
 
     def collide_with_obj(self, dir):
         if dir == 'x':
-            hits = pg.sprite.spritecollide(self, self.game.collision, False)
+            hits = pg.sprite.spritecollide(self, self.game.walls, False) # self.game.collision includes walls and player for player bounce
             if hits:
                 if self.vx > 0:
                     self.x = hits[0].rect.left - self.rect.width
@@ -140,7 +140,7 @@ class Enemy(Sprite): # dis a copy of the other class
                 self.vx = -self.vx
                 self.rect.x = self.x
         if dir == 'y':
-            hits = pg.sprite.spritecollide(self, self.game.collision, False)
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
             if hits:
                 if self.vy > 0:
                     self.y = hits[0].rect.top - self.rect.width
