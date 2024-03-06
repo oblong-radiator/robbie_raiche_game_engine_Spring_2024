@@ -15,6 +15,7 @@ class Cooldown():
     # sets all properties to zero when instantiated...
     def __init__(self):
         self.current_time = 0
+        global current_time
         self.event_time = 0
         self.delta = 0
         # ticking ensures the timer is counting...
@@ -122,9 +123,9 @@ class Game:
         self.screen.fill(BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, str(self.test_timer.countdown(45)), 24, WHITE, WIDTH/2 - 32, 2)
         self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, YELLOW, 1, 1)
         self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, LIGHTGREY, 1, 3)
+        self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, WHITE, 15, 1)
         pg.display.flip()
 
     # define input methods
