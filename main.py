@@ -15,7 +15,6 @@ class Cooldown():
     # sets all properties to zero when instantiated...
     def __init__(self):
         self.current_time = 0
-        global current_time
         self.event_time = 0
         self.delta = 0
         # ticking ensures the timer is counting...
