@@ -69,6 +69,8 @@ class Player(Sprite):
                 self.coin += 1
             if str(hits[0].__class__.__name__) == "Enemy":
                 self.hp -= 1
+                global LOADED_ENEMIES 
+                LOADED_ENEMIES -= 1
            
     def update(self):
         # self.rect.x = self.x * TILESIZE

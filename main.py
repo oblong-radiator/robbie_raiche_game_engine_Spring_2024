@@ -46,11 +46,14 @@ class Game:
         self.clock = pg.time.Clock()
         self.load_data()
         # added images folder and image in the load_data method for use with the player
+
     def load_data(self):
         game_folder = path.dirname(__file__)
         img_folder = path.join(game_folder, 'images')
         self.player_img = pg.image.load(path.join(img_folder, 'fat_albert.png')).convert_alpha()
         self.map_data = []
+        self.colrange = []
+        self.rowrange = []
         '''
         The with statement is a context manager in Python. 
         It is used to ensure that a resource is properly closed or released 
@@ -58,7 +61,7 @@ class Game:
         '''
         with open(path.join(game_folder, 'map.txt'), 'rt') as f:
             for line in f:
-                print(line)
+                # print(line)
                 self.map_data.append(line)
         
     def new(self):
@@ -85,7 +88,16 @@ class Game:
                 if tile == "C":
                     Coin(self,col,row)
                 if tile == "E":
-                    Enemy(self,col,row)
+                    global LOADED_ENEMIES
+                    self.colrange.append(col)
+                    self.rowrange.append(row)
+                    print(self.colrange)
+                    print(self.rowrange)
+                    while LOADED_ENEMIES <= 4:
+                        Enemy(self,col,row)
+                        LOADED_ENEMIES += 1
+
+
             
  # define the run method
     def run(self):
@@ -103,6 +115,7 @@ class Game:
     def update(self): # UPDATE EVERYTHING!!
         self.test_timer.ticking()
         self.all_sprites.update()
+        LOADED_ENEMIES
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, WIDTH, TILESIZE):
