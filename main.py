@@ -76,7 +76,7 @@ class Game:
             # print(row)
             # print(tiles)
             for col, tile in enumerate(tiles):
-                print(col)
+                # print(col)
                 # print(tile)
                 if tile == '1':
                     Wall(self, col, row)
