@@ -6,6 +6,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
+from main import loaded_enemies
 
 # Capitalize the class name. It's the LAW!!
 class Player(Sprite):
@@ -69,9 +70,9 @@ class Player(Sprite):
                 self.coin += 1
             if str(hits[0].__class__.__name__) == "Enemy":
                 self.hp -= 1
-                # global LOADED_ENEMIES
-                # LOADED_ENEMIES -= 1
-                # print(LOADED_ENEMIES)
+                global loaded_enemies
+                loaded_enemies -= 1
+                
            
     def update(self):
         # self.rect.x = self.x * TILESIZE

@@ -39,7 +39,6 @@ class Game:
     # Define a special method to init the properties of said class...
     def __init__(self):
         # init pygame
-        self.loaded_enemies = 0
         pg.init()
         # set size of screen and be the screen
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -75,6 +74,8 @@ class Game:
         self.coins = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.collision = pg.sprite.Group()
+        global loaded_enemies
+        loaded_enemies = 0
         # for x in range (10, 20):
         #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
@@ -90,18 +91,16 @@ class Game:
                 if tile == "C":
                     Coin(self,col,row)
                 if tile == "E":
-                    # global LOADED_ENEMIES
                     self.colrange.append(col)
                     self.rowrange.append(row)
                     print(self.colrange)
                     print(self.rowrange)
                     
-        while self.loaded_enemies <= 4:
+        while loaded_enemies <= 4:
             spawn = randint(0,3)
             Enemy(self,self.colrange[spawn],self.rowrange[spawn])
-            print(self.loaded_enemies)
-            self.loaded_enemies += 1
-
+            print(loaded_enemies)
+            loaded_enemies += 1
 
             
  # define the run method
