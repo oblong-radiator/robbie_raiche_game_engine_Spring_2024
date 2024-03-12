@@ -96,7 +96,7 @@ class Game:
                     print(self.colrange)
                     print(self.rowrange)
                     
-        while loaded_enemies <= 4:
+        while loaded_enemies <= 3:
             spawn = randint(0,3)
             Enemy(self,self.colrange[spawn],self.rowrange[spawn])
             print(loaded_enemies)

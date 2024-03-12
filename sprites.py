@@ -6,7 +6,6 @@
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
-from main import loaded_enemies
 
 # Capitalize the class name. It's the LAW!!
 class Player(Sprite):
