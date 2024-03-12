@@ -69,8 +69,9 @@ class Player(Sprite):
                 self.coin += 1
             if str(hits[0].__class__.__name__) == "Enemy":
                 self.hp -= 1
-                global LOADED_ENEMIES 
-                LOADED_ENEMIES -= 1
+                # global LOADED_ENEMIES
+                # LOADED_ENEMIES -= 1
+                # print(LOADED_ENEMIES)
            
     def update(self):
         # self.rect.x = self.x * TILESIZE
@@ -87,7 +88,6 @@ class Player(Sprite):
 
 
 class Wall(Sprite):
-
     def __init__(self, game, x, y): 
         self.groups = game.all_sprites, game.walls, game.collision
         Sprite.__init__(self, self.groups)

@@ -4,6 +4,7 @@
 
 # My first source control edit!!1!!1!!
 # Import stuff
+from random import randint
 import sys
 import pygame as pg
 from settings import *
@@ -38,6 +39,7 @@ class Game:
     # Define a special method to init the properties of said class...
     def __init__(self):
         # init pygame
+        self.loaded_enemies = 0
         pg.init()
         # set size of screen and be the screen
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -88,14 +90,17 @@ class Game:
                 if tile == "C":
                     Coin(self,col,row)
                 if tile == "E":
-                    global LOADED_ENEMIES
+                    # global LOADED_ENEMIES
                     self.colrange.append(col)
                     self.rowrange.append(row)
                     print(self.colrange)
                     print(self.rowrange)
-                    while LOADED_ENEMIES <= 4:
-                        Enemy(self,col,row)
-                        LOADED_ENEMIES += 1
+                    
+        while self.loaded_enemies <= 4:
+            spawn = randint(0,3)
+            Enemy(self,self.colrange[spawn],self.rowrange[spawn])
+            print(self.loaded_enemies)
+            self.loaded_enemies += 1
 
 
             
@@ -115,7 +120,7 @@ class Game:
     def update(self): # UPDATE EVERYTHING!!
         self.test_timer.ticking()
         self.all_sprites.update()
-        LOADED_ENEMIES
+        
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, WIDTH, TILESIZE):
