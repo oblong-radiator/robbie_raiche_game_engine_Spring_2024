@@ -7,10 +7,11 @@
 from random import randint
 import sys
 import pygame as pg
-from settings import *
+import settings as s
 from sprites import *
 from os import path
 from math import floor
+import time as t
 
 class Cooldown():
     # sets all properties to zero when instantiated...
@@ -41,8 +42,8 @@ class Game:
         # init pygame
         pg.init()
         # set size of screen and be the screen
-        self.screen = pg.display.set_mode((WIDTH, HEIGHT))
-        pg.display.set_caption(TITLE)
+        self.screen = pg.display.set_mode((s.WIDTH, s.HEIGHT))
+        pg.display.set_caption(s.TITLE)
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
@@ -74,8 +75,6 @@ class Game:
         self.coins = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.collision = pg.sprite.Group()
-        global loaded_enemies
-        loaded_enemies = 0
         # for x in range (10, 20):
         #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
@@ -93,21 +92,12 @@ class Game:
                 if tile == "E":
                     self.colrange.append(col)
                     self.rowrange.append(row)
-                    print(self.colrange)
-                    print(self.rowrange)
-                    
-        while loaded_enemies <= 3:
-            spawn = randint(0,3)
-            Enemy(self,self.colrange[spawn],self.rowrange[spawn])
-            print(loaded_enemies)
-            loaded_enemies += 1
 
-            
  # define the run method
     def run(self):
         self.playing = True
         while self.playing:
-            self.dt = self.clock.tick(FPS) / 1000
+            self.dt = self.clock.tick(s.FPS) / 1000
             self.events()
             self.update()
             self.draw()
@@ -119,29 +109,38 @@ class Game:
     def update(self): # UPDATE EVERYTHING!!
         self.test_timer.ticking()
         self.all_sprites.update()
-        
+        spawns = [7]
+        while s.loaded_enemies < 5:
+            spawn = randint(0,5)
+            spawns.append(spawn)
+            if spawn == spawns[-2]:
+                break
+            Enemy(self,self.colrange[spawn],self.rowrange[spawn])
+            s.loaded_enemies += 1
+            print(s.loaded_enemies)
+            t.sleep(0.1)
 
     def draw_grid(self): # draw the grid with the tile size from settings
-        for x in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
-        for y in range(0, WIDTH, TILESIZE):
-            pg.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
+        for x in range(0, s.WIDTH, s.TILESIZE):
+            pg.draw.line(self.screen, s.LIGHTGREY, (x, 0), (x, s.HEIGHT))
+        for y in range(0, s.WIDTH, s.TILESIZE):
+            pg.draw.line(self.screen, s.LIGHTGREY, (0, y), (s.WIDTH, y))
 
     def draw_text(self, surface, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
-        text_rect.topleft = (x*TILESIZE,y*TILESIZE)
+        text_rect.topleft = (x*s.TILESIZE,y*s.TILESIZE)
         surface.blit(text_surface, text_rect)
 
     def draw(self): # draw the background and the grid and all the sprites
-        self.screen.fill(BGCOLOR)
+        self.screen.fill(s.BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, YELLOW, 1, 1)
-        self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, LIGHTGREY, 1, 3)
-        self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, WHITE, 15, 1)
+        self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, s.YELLOW, 1, 1)
+        self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, s.LIGHTGREY, 1, 3)
+        self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, s.WHITE, 15, 1)
         pg.display.flip()
 
     # define input methods

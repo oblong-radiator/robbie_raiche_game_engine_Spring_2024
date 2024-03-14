@@ -5,7 +5,8 @@
 # Import stuff
 import pygame as pg
 from pygame.sprite import Sprite
-from settings import *
+import settings as s
+
 
 # Capitalize the class name. It's the LAW!!
 class Player(Sprite):
@@ -20,8 +21,8 @@ class Player(Sprite):
         self.image = game.player_img
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.x = x * s.TILESIZE
+        self.y = y * s.TILESIZE
 
     # def move(self, dx=0, dy=0,):
     #     self.x += dx
@@ -31,13 +32,13 @@ class Player(Sprite):
         self.vx, self.vy = 0, 0
         keys = pg.key.get_pressed()
         if keys[pg.K_LEFT] or keys[pg.K_a]:
-            self.vx = -PLAYER_SPEED
+            self.vx = -s.PLAYER_SPEED
         if keys[pg.K_RIGHT] or keys[pg.K_d]:
-            self.vx = PLAYER_SPEED
+            self.vx = s.PLAYER_SPEED
         if keys[pg.K_UP] or keys[pg.K_w]:
-            self.vy = -PLAYER_SPEED
+            self.vy = -s.PLAYER_SPEED
         if keys[pg.K_DOWN] or keys[pg.K_s]:
-            self.vy = PLAYER_SPEED
+            self.vy = s.PLAYER_SPEED
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071               # MATH!!
             self.vy *= 0.7071
@@ -69,8 +70,8 @@ class Player(Sprite):
                 self.coin += 1
             if str(hits[0].__class__.__name__) == "Enemy":
                 self.hp -= 1
-                global loaded_enemies
-                loaded_enemies -= 1
+                s.loaded_enemies -= 1
+                print(s.loaded_enemies)
                 
            
     def update(self):
@@ -92,41 +93,41 @@ class Wall(Sprite):
         self.groups = game.all_sprites, game.walls, game.collision
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE,TILESIZE))
-        self.image.fill(WALLCOLOR)
+        self.image = pg.Surface((s.TILESIZE,s.TILESIZE))
+        self.image.fill(s.WALLCOLOR)
         self.rect = self.image.get_rect()
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE 
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.x = x * s.TILESIZE
+        self.y = y * s.TILESIZE 
+        self.rect.x = x * s.TILESIZE
+        self.rect.y = y * s.TILESIZE
 
 class Coin(Sprite): # dis a copy of the wall class
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.coins
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(COINCOLOR)
+        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
+        self.image.fill(s.COINCOLOR)
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
-        self.rect.x = x * TILESIZE
-        self.rect.y = y * TILESIZE
+        self.rect.x = x * s.TILESIZE
+        self.rect.y = y * s.TILESIZE
 
 class Enemy(Sprite): # dis a copy of the other class
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.enemies
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        self.image.fill(LIGHTGREY)
+        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
+        self.image.fill(s.LIGHTGREY)
         self.rect = self.image.get_rect()
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.x = x * s.TILESIZE
+        self.y = y * s.TILESIZE
         self.rect.x = x
         self.rect.y = y
-        self.vx = ENEMY_SPEED
-        self.vy = ENEMY_SPEED
+        self.vx = s.ENEMY_SPEED
+        self.vy = s.ENEMY_SPEED
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071               # MATH!!
             self.vy *= 0.7071
