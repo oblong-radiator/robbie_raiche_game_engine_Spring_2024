@@ -44,9 +44,12 @@ class Game:
         # set size of screen and be the screen
         self.screen = pg.display.set_mode((s.WIDTH, s.HEIGHT))
         pg.display.set_caption(s.TITLE)
+        self.running = True
+        self.paused = False
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
+        
         # added images folder and image in the load_data method for use with the player
 
     def load_data(self):
@@ -107,18 +110,19 @@ class Game:
         sys.exit()
 
     def update(self): # UPDATE EVERYTHING!!
-        self.test_timer.ticking()
-        self.all_sprites.update()
-        spawns = [7]
-        while s.loaded_enemies < 5:
-            spawn = randint(0,5)
-            spawns.append(spawn)
-            if spawn == spawns[-2]:
-                break
-            Enemy(self,self.colrange[spawn],self.rowrange[spawn])
-            s.loaded_enemies += 1
-            print(s.loaded_enemies)
-            t.sleep(0.1)
+        if not self.paused:
+            self.test_timer.ticking()
+            self.all_sprites.update()
+            spawns = [7]
+            while s.loaded_enemies < 3:
+                spawn = randint(0,5)
+                spawns.append(spawn)
+                if spawn == spawns[-2]:
+                    break
+                Enemy(self,self.colrange[spawn],self.rowrange[spawn])
+                s.loaded_enemies += 1
+                print(s.loaded_enemies)
+            
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, s.WIDTH, s.TILESIZE):
@@ -148,6 +152,13 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.quit()
+            if event.type == pg.KEYUP:
+                if event.key == pg.K_p:
+                    if not self.paused:
+                        self.paused = True
+                        self.show_go_screen
+                    else:
+                        self.paused = False
             # if event.type == pg.KEYDOWN:
             #     if event.key == pg.K_a:
             #         self.player.move(dx=-1)
@@ -159,14 +170,35 @@ class Game:
             #         self.player.move(dy=1)
 
     def show_start_screen(self):
-        pass
+        self.screen.fill(s.BGCOLOR)
+        self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.WHITE, 10, 10)
+        pg.display.flip()
+        self.wait_for_key()
+
     def show_go_screen(self):
-        pass
+        if not self.running:
+            return
+        self.screen.fill(s.BLACK)
+        self.draw_text(self.screen, "This is the GO screen - press any key to play", 24, s.WHITE, 10, 10)
+        pg.display.flip()
+        self.wait_for_key()
+
+
+    def wait_for_key(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(s.FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    waiting = False
     
 
 g = Game()
-# g.show_start_screen()
+g.show_start_screen()
 while True:
         g.new()
         g.run()
-        # g.show_go_screen()
+        g.show_go_screen()
