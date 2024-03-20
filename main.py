@@ -114,6 +114,10 @@ class Game:
             self.test_timer.ticking()
             self.all_sprites.update()
             spawns = [7]
+            if self.player.coin > 3:
+                self.show_end_screen()
+            if self.player.hp <= 0:
+                self.show_death_screen()
             while s.loaded_enemies < 3:
                 spawn = randint(0,5)
                 spawns.append(spawn)
@@ -155,8 +159,8 @@ class Game:
             if event.type == pg.KEYUP:
                 if event.key == pg.K_p:
                     if not self.paused:
+                        self.show_go_screen()
                         self.paused = True
-                        self.show_go_screen
                     else:
                         self.paused = False
             # if event.type == pg.KEYDOWN:
@@ -171,6 +175,7 @@ class Game:
 
     def show_start_screen(self):
         self.screen.fill(s.BGCOLOR)
+        self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win. Press P to pause at any time.", 24, s.WHITE, 5, 8)
         self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.WHITE, 10, 10)
         pg.display.flip()
         self.wait_for_key()
@@ -178,11 +183,23 @@ class Game:
     def show_go_screen(self):
         if not self.running:
             return
-        self.screen.fill(s.BLACK)
-        self.draw_text(self.screen, "This is the GO screen - press any key to play", 24, s.WHITE, 10, 10)
+        # self.screen.fill(s.BGCOLOR)
+        self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win.", 24, s.WHITE, 10, 8)
+        self.draw_text(self.screen, "Game paused. Please press P to continue.", 24, s.WHITE, 10, 10)
         pg.display.flip()
-        self.wait_for_key()
+        self.wait_for_key2()
 
+    def show_end_screen(self):
+        self.screen.fill(s.BGCOLOR)
+        self.draw_text(self.screen, "You have collected all coins! Thanks for playing! Please close the game window.", 24, s.WHITE, 5, 10)
+        pg.display.flip()
+        self.wait_for_key3()
+
+    def show_death_screen(self):
+        self.screen.fill(s.BGCOLOR)
+        self.draw_text(self.screen, "You have died. Please close the game window.", 24, s.WHITE, 5, 10)
+        pg.display.flip()
+        self.wait_for_key4()
 
     def wait_for_key(self):
         waiting = True
@@ -194,11 +211,51 @@ class Game:
                     self.quit()
                 if event.type == pg.KEYUP:
                     waiting = False
+
+    def wait_for_key2(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(s.FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                if event.type == pg.KEYUP:
+                    if event.key == pg.K_p:
+                        self.paused = False
+                        waiting = False
+
+    def wait_for_key3(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(s.FPS)
+            self.paused = True
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
     
+    def wait_for_key4(self):
+        waiting = True
+        while waiting:
+            self.clock.tick(s.FPS)
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    waiting = False
+                    self.quit()
+                # if event.type == pg.KEYUP:
+                #     if event.key == pg.K_r:
+                #         self.paused = False
+                #         waiting = False
+                #         for s in self.all_sprites:
+                #             s.kill()
+                #         g.new()
+                #         g.run()
+
 
 g = Game()
 g.show_start_screen()
 while True:
         g.new()
         g.run()
-        g.show_go_screen()
+        # g.show_go_screen()
