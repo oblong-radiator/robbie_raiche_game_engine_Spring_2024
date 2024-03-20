@@ -1,6 +1,6 @@
 # This file was created by Robbie Raiche
 
-# game timer, different game levels, hp kills (stuff for thing)
+# game timer, random enemy spawning, hp kills (stuff for thing)
 
 # My first source control edit!!1!!1!!
 # Import stuff
@@ -134,7 +134,7 @@ class Game:
         for y in range(0, s.WIDTH, s.TILESIZE):
             pg.draw.line(self.screen, s.LIGHTGREY, (0, y), (s.WIDTH, y))
 
-    def draw_text(self, surface, text, size, color, x, y):
+    def draw_text(self, surface, text, size, color, x, y): # handles any text popups on screen.
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
@@ -173,14 +173,14 @@ class Game:
             #     if event.key == pg.K_s:
             #         self.player.move(dy=1)
 
-    def show_start_screen(self):
+    def show_start_screen(self): #startup screen function
         self.screen.fill(s.BGCOLOR)
         self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win. Press P to pause at any time.", 24, s.WHITE, 5, 8)
         self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.WHITE, 10, 10)
         pg.display.flip()
         self.wait_for_key()
 
-    def show_go_screen(self):
+    def show_go_screen(self): #pause screen function
         if not self.running:
             return
         # self.screen.fill(s.BGCOLOR)
@@ -189,19 +189,19 @@ class Game:
         pg.display.flip()
         self.wait_for_key2()
 
-    def show_end_screen(self):
+    def show_end_screen(self): #win screen function
         self.screen.fill(s.BGCOLOR)
         self.draw_text(self.screen, "You have collected all coins! Thanks for playing! Please close the game window.", 24, s.WHITE, 5, 10)
         pg.display.flip()
         self.wait_for_key3()
 
-    def show_death_screen(self):
+    def show_death_screen(self): #end screen
         self.screen.fill(s.BGCOLOR)
         self.draw_text(self.screen, "You have died. Please close the game window.", 24, s.WHITE, 5, 10)
         pg.display.flip()
         self.wait_for_key4()
 
-    def wait_for_key(self):
+    def wait_for_key(self): # conditions for startup screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -212,7 +212,7 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
 
-    def wait_for_key2(self):
+    def wait_for_key2(self): # events for pause screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -225,7 +225,7 @@ class Game:
                         self.paused = False
                         waiting = False
 
-    def wait_for_key3(self):
+    def wait_for_key3(self): # events for win screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -234,8 +234,8 @@ class Game:
                 if event.type == pg.QUIT:
                     waiting = False
                     self.quit()
-    
-    def wait_for_key4(self):
+     
+    def wait_for_key4(self):  # events for death screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
