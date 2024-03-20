@@ -152,8 +152,6 @@ class Enemy(Sprite): # dis a copy of the other class
                 self.vy = -self.vy
                 self.rect.y = self.y
 
-
-
     def update(self):
         # self.rect.x = self.x * TILESIZE
         # self.rect.y =  self.y * TILESIZE
@@ -163,3 +161,4 @@ class Enemy(Sprite): # dis a copy of the other class
        self.collide_with_obj('x')
        self.rect.y = self.y 
        self.collide_with_obj('y')
+

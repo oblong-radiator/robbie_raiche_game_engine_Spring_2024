@@ -1,6 +1,6 @@
 # This file was created by Robbie Raiche
 
-# game timer, random enemy spawning, hp kills (stuff for thing)
+# game timer, random enemy spawning, level change system
 
 # My first source control edit!!1!!1!!
 # Import stuff
@@ -13,27 +13,7 @@ from os import path
 from math import floor
 import time as t
 
-class Cooldown():
-    # sets all properties to zero when instantiated...
-    def __init__(self):
-        self.current_time = 0
-        self.event_time = 0
-        self.delta = 0
-        # ticking ensures the timer is counting...
-    # must use ticking to count up or down
-    def ticking(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
-        self.delta = self.current_time - self.event_time
-    # resets event time to zero - cooldown reset
-    def countdown(self, x):
-        x = x - self.delta
-        if x != None:
-            return x
-    def event_reset(self):
-        self.event_time = floor((pg.time.get_ticks())/1000)
-    # sets current time
-    def timer(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
+
 
 # Creating the game class
 class Game:
@@ -51,6 +31,17 @@ class Game:
         self.load_data()
         
         # added images folder and image in the load_data method for use with the player
+
+    def change_level(self, lvl):
+        # kill all existing sprites first to save memory
+        for s in self.all_sprites:
+            s.kill()
+        self.map_data = [] # reset map_data to empty
+        with open(path.join(self.game_folder, lvl), 'rt') as f: #open level
+            for line in f:
+                print(line)
+                self.map_data.append(line)
+        self.new()
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -70,7 +61,6 @@ class Game:
                 self.map_data.append(line)
         
     def new(self):
-        self.test_timer = Cooldown()
         print("create new game...")
         # init all variables, setup groups,instantiate classes.
         self.all_sprites = pg.sprite.Group()
@@ -111,7 +101,6 @@ class Game:
 
     def update(self): # UPDATE EVERYTHING!!
         if not self.paused:
-            self.test_timer.ticking()
             self.all_sprites.update()
             spawns = [7]
             if self.player.coin > 3:
@@ -178,7 +167,7 @@ class Game:
         self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win. Press P to pause at any time.", 24, s.WHITE, 5, 8)
         self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.WHITE, 10, 10)
         pg.display.flip()
-        self.wait_for_key()
+        self.start_screen_events()
 
     def show_go_screen(self): #pause screen function
         if not self.running:
@@ -187,21 +176,21 @@ class Game:
         self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win.", 24, s.WHITE, 10, 8)
         self.draw_text(self.screen, "Game paused. Please press P to continue.", 24, s.WHITE, 10, 10)
         pg.display.flip()
-        self.wait_for_key2()
+        self.pause_screen_events()
 
     def show_end_screen(self): #win screen function
         self.screen.fill(s.BGCOLOR)
         self.draw_text(self.screen, "You have collected all coins! Thanks for playing! Please close the game window.", 24, s.WHITE, 5, 10)
         pg.display.flip()
-        self.wait_for_key3()
+        self.win_screen_events()
 
     def show_death_screen(self): #end screen
         self.screen.fill(s.BGCOLOR)
         self.draw_text(self.screen, "You have died. Please close the game window.", 24, s.WHITE, 5, 10)
         pg.display.flip()
-        self.wait_for_key4()
+        self.dead_screen_events()
 
-    def wait_for_key(self): # conditions for startup screen
+    def start_screen_events(self): # conditions for startup screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -212,7 +201,7 @@ class Game:
                 if event.type == pg.KEYUP:
                     waiting = False
 
-    def wait_for_key2(self): # events for pause screen
+    def pause_screen_events(self): # events for pause screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -225,7 +214,7 @@ class Game:
                         self.paused = False
                         waiting = False
 
-    def wait_for_key3(self): # events for win screen
+    def win_screen_events(self): # events for win screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
@@ -235,7 +224,7 @@ class Game:
                     waiting = False
                     self.quit()
      
-    def wait_for_key4(self):  # events for death screen
+    def dead_screen_events(self):  # events for death screen
         waiting = True
         while waiting:
             self.clock.tick(s.FPS)
