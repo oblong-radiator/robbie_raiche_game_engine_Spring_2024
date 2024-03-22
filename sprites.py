@@ -72,6 +72,8 @@ class Player(Sprite):
                 self.hp -= 1
                 s.loaded_enemies -= 1
                 print(s.loaded_enemies)
+            if str(hits[0].__class__.__name__) == "Elevator":
+                s.inelevator = True
                 
            
     def update(self):
@@ -86,6 +88,7 @@ class Player(Sprite):
        self.collide_with_walls('y')
        self.collide_with_obj(self.game.coins, True)
        self.collide_with_obj(self.game.enemies, True)
+       self.collide_with_obj(self.game.elevators, True)
 
 
 class Wall(Sprite):
@@ -161,4 +164,17 @@ class Enemy(Sprite): # dis a copy of the other class
        self.collide_with_obj('x')
        self.rect.y = self.y 
        self.collide_with_obj('y')
+
+class Elevator(Sprite): # copy of coin class for elevator
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.elevators
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
+        self.image.fill(s.ELEVCOLOR)
+        self.rect = self.image.get_rect()
+        self.x = x
+        self.y = y
+        self.rect.x = x * s.TILESIZE
+        self.rect.y = y * s.TILESIZE
 

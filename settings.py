@@ -17,6 +17,7 @@ LIGHTGREY = (100,100,100)
 RED = (255,0,0)
 WALLCOLOR = (0,255,0)
 COINCOLOR = (255,255,0)
+ELEVCOLOR = (255,0,255)
 BGCOLOR = SKYBLUE
 BLACK = (0,0,0)
 WHITE = (255,255,255)
@@ -24,3 +25,6 @@ YELLOW = (255,255,0)
 
 global loaded_enemies
 loaded_enemies = 0
+
+global inelevator
+inelevator = False

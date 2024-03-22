@@ -13,7 +13,8 @@ from os import path
 from math import floor
 import time as t
 
-
+LEVEL1 = "map.txt"
+LEVEL2 = "maplv2.txt"
 
 # Creating the game class
 class Game:
@@ -32,21 +33,11 @@ class Game:
         
         # added images folder and image in the load_data method for use with the player
 
-    def change_level(self, lvl):
-        # kill all existing sprites first to save memory
-        for s in self.all_sprites:
-            s.kill()
-        self.map_data = [] # reset map_data to empty
-        with open(path.join(self.game_folder, lvl), 'rt') as f: #open level
-            for line in f:
-                print(line)
-                self.map_data.append(line)
-        self.new()
 
     def load_data(self):
-        game_folder = path.dirname(__file__)
-        img_folder = path.join(game_folder, 'images')
-        self.player_img = pg.image.load(path.join(img_folder, 'fat_albert.png')).convert_alpha()
+        self.game_folder = path.dirname(__file__)
+        self.img_folder = path.join(self.game_folder, 'images')
+        self.player_img = pg.image.load(path.join(self.img_folder, 'fat_albert.png')).convert_alpha()
         self.map_data = []
         self.colrange = []
         self.rowrange = []
@@ -55,10 +46,33 @@ class Game:
         It is used to ensure that a resource is properly closed or released 
         after it is used. This can help to prevent errors and leaks.
         '''
-        with open(path.join(game_folder, 'map.txt'), 'rt') as f:
+        with open(path.join(self.game_folder, 'map.txt'), 'rt') as f:
+            self.level = 1
             for line in f:
                 # print(line)
                 self.map_data.append(line)
+
+    def change_level(self, lvl):
+        # kill all existing sprites first to save memory
+        for s in self.all_sprites:
+            s.kill()
+        self.map_data = [] # reset map_data to empty
+        s.loaded_enemies = 0
+        with open(path.join(self.game_folder, lvl), 'rt') as f: #open level
+            for line in f:
+                print(line)
+                self.map_data.append(line)
+        for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
+            for col, tile in enumerate(tiles):
+                if tile == '1':
+                    Wall(self, col, row)
+                if tile == "P":
+                    self.player = Player(self,col,row)
+                if tile == "C":
+                    Coin(self,col,row)
+                if tile == "E":
+                    self.colrange.append(col)
+                    self.rowrange.append(row)
         
     def new(self):
         print("create new game...")
@@ -68,6 +82,8 @@ class Game:
         self.coins = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.collision = pg.sprite.Group()
+        self.elevators = pg.sprite.Group()
+        self.elevator = 0
         # for x in range (10, 20):
         #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
@@ -85,6 +101,7 @@ class Game:
                 if tile == "E":
                     self.colrange.append(col)
                     self.rowrange.append(row)
+        
 
  # define the run method
     def run(self):
@@ -103,7 +120,7 @@ class Game:
         if not self.paused:
             self.all_sprites.update()
             spawns = [7]
-            if self.player.coin > 3:
+            if self.player.coin == 8:
                 self.show_end_screen()
             if self.player.hp <= 0:
                 self.show_death_screen()
@@ -115,7 +132,16 @@ class Game:
                 Enemy(self,self.colrange[spawn],self.rowrange[spawn])
                 s.loaded_enemies += 1
                 print(s.loaded_enemies)
-            
+            if s.inelevator == True:
+                self.change_level(LEVEL2)
+                self.level = 2
+                s.inelevator = False
+            if self.level == 1:
+                if self.elevator == 0:
+                    if self.player.coin == 4:
+                        Elevator(self,30,12)
+                        self.elevator = 1
+                        print("elevator spawned") 
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, s.WIDTH, s.TILESIZE):
