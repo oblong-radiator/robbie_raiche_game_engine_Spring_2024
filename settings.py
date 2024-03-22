@@ -1,5 +1,5 @@
 #This file was created by Robbie Raiche
-TITLE = "big funny"
+TITLE = "bad game"
 
 FPS = 30
 
