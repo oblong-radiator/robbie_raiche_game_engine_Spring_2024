@@ -8,6 +8,19 @@ from pygame.sprite import Sprite
 import settings as s
 
 
+class Spritesheet:
+    # utility class for loading and parsing spritesheets
+    def __init__(self, filename):
+        self.spritesheet = pg.image.load(filename).convert()
+
+    def get_image(self, x, y, width, height):
+        # grab an image out of a larger spritesheet
+        image = pg.Surface((width, height))
+        image.blit(self.spritesheet, (0, 0), (x, y, width, height))
+        # image = pg.transform.scale(image, (width, height))
+        image = pg.transform.scale(image, (width * 4, height * 4))
+        return image
+    
 # Capitalize the class name. It's the LAW!!
 class Player(Sprite):
 # This makes the player class a subclass of Sprite, imported from Pygame. Now the player class can do everything that Sprite module class thing can do.
