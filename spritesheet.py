@@ -14,4 +14,3 @@ while True:
         then = now
         print(frames[current_frame%frames_length])
         current_frame += 1
-
