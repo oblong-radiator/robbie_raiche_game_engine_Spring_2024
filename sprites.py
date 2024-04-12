@@ -6,7 +6,12 @@
 import pygame as pg
 from pygame.sprite import Sprite
 import settings as s
+from os import path
 
+SPRITESHEET = "theBell.png"
+
+game_folder = path.dirname(__file__)
+img_folder = path.join(game_folder, 'images')
 
 class Spritesheet:
     # utility class for loading and parsing spritesheets
@@ -31,15 +36,29 @@ class Player(Sprite):
         self.hp = 3
         self.coin = 0
         # self.image = pg.Surface((TILESIZE,TILESIZE))
-        self.image = game.player_img
+        self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
+        self.load_images()
+        self.image = self.standing_frames[0]
         self.rect = self.image.get_rect()
         self.vx, self.vy = 0, 0
         self.x = x * s.TILESIZE
         self.y = y * s.TILESIZE
+        self.current_frame = 0
+        self.last_update = 0
 
-    # def move(self, dx=0, dy=0,):
-    #     self.x += dx
-    #     self.y += dy
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
+                                self.spritesheet.get_image(32,0, 32, 32)]
+        
+    def animate(self):
+        now = pg.time.get_ticks()
+        if now - self.last_update > 350:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
     
     def get_keys(self):
         self.vx, self.vy = 0, 0
@@ -93,6 +112,7 @@ class Player(Sprite):
         # self.rect.x = self.x * TILESIZE
         # self.rect.y = self.y * TILESIZE
        self.get_keys()
+       self.animate()
        self.x += self.vx * self.game.dt
        self.y += self.vy * self.game.dt
        self.rect.x = self.x
