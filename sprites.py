@@ -23,7 +23,7 @@ class Spritesheet:
         image = pg.Surface((width, height))
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
         # image = pg.transform.scale(image, (width, height))
-        image = pg.transform.scale(image, (width * 2, height * 2))
+        image = pg.transform.scale(image, (width * 2, height * 2)) # Control the multipliers to multiply size
         return image
     
 # Capitalize the class name. It's the LAW!!
