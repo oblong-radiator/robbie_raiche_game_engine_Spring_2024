@@ -37,7 +37,7 @@ class Game:
     def load_data(self):
         self.game_folder = path.dirname(__file__)
         self.img_folder = path.join(self.game_folder, 'images')
-        self.player_img = pg.image.load(path.join(self.img_folder, 'fat_albert.png')).convert_alpha()
+        # self.player_img = pg.image.load(path.join(self.img_folder, 'fat_albert.png')).convert_alpha()
         self.map_data = []
         self.colrange = []
         self.rowrange = []
