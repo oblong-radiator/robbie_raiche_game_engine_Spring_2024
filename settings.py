@@ -1,7 +1,7 @@
 #This file was created by Robbie Raiche
 TITLE = "bad game"
 
-FPS = 30
+FPS = 60
 
 WIDTH = 1024 # 32 grids wide
 HEIGHT = 768 # 24 grids high

@@ -35,7 +35,6 @@ class Player(Sprite):
         self.game = game
         self.hp = 3
         self.coin = 0
-        # self.image = pg.Surface((TILESIZE,TILESIZE))
         self.spritesheet = Spritesheet(path.join(img_folder, SPRITESHEET))
         self.load_images()
         self.image = self.standing_frames[0]
