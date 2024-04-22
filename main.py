@@ -30,8 +30,8 @@ class Game:
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
-        
-        # added images folder and image in the load_data method for use with the player
+        self.enemy_spawn_delay = 5  # Delay in seconds
+        self.enemy_spawn_timer = 0   # Timer for enemy spawn delay
 
 
     def load_data(self):
@@ -52,26 +52,46 @@ class Game:
                 self.map_data.append(line)
 
     def change_level(self, lvl):
-        # kill all existing sprites first to save memory
-        for s in self.all_sprites:
-            s.kill()
-        self.map_data = [] # reset map_data to empty
+        # Store current coin count
+        current_coin_count = self.player.coin
+
+        # Kill all existing sprites and reset necessary attributes
+        for sprite in self.all_sprites:
+            sprite.kill()
+        self.map_data = []
         s.loaded_enemies = 0
-        with open(path.join(self.game_folder, lvl), 'rt') as f: #open level
+        self.colrange = []
+        self.rowrange = []
+
+        # Load new level
+        with open(path.join(self.game_folder, lvl), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
-        for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
+
+        # Spawn sprites for new level
+        for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
                     Wall(self, col, row)
                 if tile == "P":
-                    self.player = Player(self,col,row)
+                    self.player = Player(self, col, row)
                 if tile == "C":
-                    Coin(self,col,row)
+                    Coin(self, col, row)
                 if tile == "E":
                     self.colrange.append(col)
                     self.rowrange.append(row)
+
+        # Restore coin count
+        self.player.coin = current_coin_count
+
+        # Spawn enemies on new level
+        for _ in range(3):
+            spawn = randint(0, 5)
+            Enemy(self, self.colrange[spawn], self.rowrange[spawn])
+            s.loaded_enemies += 1
+            print(s.loaded_enemies)
+
         
     def new(self):
         print("create new game...")
@@ -117,14 +137,25 @@ class Game:
                 self.show_end_screen()
             if self.player.hp <= 0:
                 self.show_death_screen()
-            while s.loaded_enemies < 3:
-                spawn = randint(0,5)
-                spawns.append(spawn)
-                if spawn == spawns[-2]:
-                    break
-                Enemy(self,self.colrange[spawn],self.rowrange[spawn])
-                s.loaded_enemies += 1
-                print(s.loaded_enemies)
+            if self.enemy_spawn_timer > 0:
+                self.enemy_spawn_timer -= self.dt
+            else:
+                # Spawn enemies if the timer has elapsed
+                spawns = [7]
+                if self.player.coin == 8:
+                    self.show_end_screen()
+                if self.player.hp <= 0:
+                    self.show_death_screen()
+                while s.loaded_enemies < 3:
+                    spawn = randint(0, 5)
+                    spawns.append(spawn)
+                    if spawn == spawns[-2]:
+                        break
+                    Enemy(self, self.colrange[spawn], self.rowrange[spawn])
+                    s.loaded_enemies += 1
+                    print(s.loaded_enemies)
+                    # Reset the enemy spawn timer after spawning
+                    self.enemy_spawn_timer = self.enemy_spawn_delay
             if s.inelevator == True:
                 self.change_level(LEVEL2)
                 self.level = 2
