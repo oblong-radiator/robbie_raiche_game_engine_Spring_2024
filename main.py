@@ -37,7 +37,6 @@ class Game:
     def load_data(self):
         self.game_folder = path.dirname(__file__)
         self.img_folder = path.join(self.game_folder, 'images')
-        # self.player_img = pg.image.load(path.join(self.img_folder, 'fat_albert.png')).convert_alpha()
         self.map_data = []
         self.colrange = []
         self.rowrange = []
@@ -84,14 +83,8 @@ class Game:
         self.collision = pg.sprite.Group()
         self.elevators = pg.sprite.Group()
         self.elevator = 0
-        # for x in range (10, 20):
-        #     Wall(self, x, 5)
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
-            # print(row)
-            # print(tiles)
             for col, tile in enumerate(tiles):
-                # print(col)
-                # print(tile)
                 if tile == '1':
                     Wall(self, col, row)
                 if tile == "P":
@@ -178,15 +171,7 @@ class Game:
                         self.paused = True
                     else:
                         self.paused = False
-            # if event.type == pg.KEYDOWN:
-            #     if event.key == pg.K_a:
-            #         self.player.move(dx=-1)
-            #     if event.key == pg.K_d:
-            #         self.player.move(dx=1)
-            #     if event.key == pg.K_w:
-            #         self.player.move(dy=-1)
-            #     if event.key == pg.K_s:
-            #         self.player.move(dy=1)
+
 
     def show_start_screen(self): #startup screen function
         self.screen.fill(s.BGCOLOR)
