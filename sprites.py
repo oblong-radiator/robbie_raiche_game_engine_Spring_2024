@@ -155,7 +155,7 @@ class Enemy(Sprite): # dis a copy of the other class
         Sprite.__init__(self, self.groups)
         self.game = game
         # Load the image file for the enemy
-        self.image = pg.image.load(path.join(img_folder, "roomba.jpg")).convert()
+        self.image = pg.image.load(path.join(img_folder, "roomba.png")).convert()
         self.rect = self.image.get_rect()
         self.x = x * s.TILESIZE
         self.y = y * s.TILESIZE
