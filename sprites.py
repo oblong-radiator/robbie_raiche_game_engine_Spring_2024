@@ -154,8 +154,8 @@ class Enemy(Sprite): # dis a copy of the other class
         self.groups = game.all_sprites, game.enemies
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
-        self.image.fill(s.LIGHTGREY)
+        # Load the image file for the enemy
+        self.image = pg.image.load(path.join(img_folder, "roomba.jpg")).convert()
         self.rect = self.image.get_rect()
         self.x = x * s.TILESIZE
         self.y = y * s.TILESIZE
@@ -166,6 +166,7 @@ class Enemy(Sprite): # dis a copy of the other class
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071               # MATH!!
             self.vy *= 0.7071
+    
 
     def collide_with_obj(self, dir):
         if dir == 'x':
