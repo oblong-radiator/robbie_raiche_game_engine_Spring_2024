@@ -27,6 +27,7 @@ class Game:
         pg.display.set_caption(s.TITLE)
         self.running = True
         self.paused = False
+        self.loaded_enemies = 0
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
@@ -59,7 +60,7 @@ class Game:
         for sprite in self.all_sprites:
             sprite.kill()
         self.map_data = []
-        s.loaded_enemies = 0
+        self.loaded_enemies = 0
         self.colrange = []
         self.rowrange = []
 
@@ -89,8 +90,8 @@ class Game:
         for _ in range(3):
             spawn = randint(0, 5)
             Enemy(self, self.colrange[spawn], self.rowrange[spawn])
-            s.loaded_enemies += 1
-            print(s.loaded_enemies)
+            self.loaded_enemies += 1
+            print(self.loaded_enemies)
 
         
     def new(self):
@@ -124,42 +125,39 @@ class Game:
             self.events()
             self.update()
             self.draw()
+        self.enemy_spawning()
 
     def quit(self): # x button works now
         pg.quit()
         sys.exit()
 
+    def enemy_spawning(self):
+        if self.loaded_enemies < 3:
+            self.enemy_spawn_timer -= self.dt
+            if self.enemy_spawn_timer <= 0:
+                spawn = randint(0, len(self.colrange)-1)
+                Enemy(self, self.colrange[spawn], self.rowrange[spawn])
+                self.loaded_enemies += 1
+                print("enemy spawned")
+                self.enemy_spawn_timer = self.enemy_spawn_delay
+
     def update(self): # UPDATE EVERYTHING!!
         if not self.paused:
             self.all_sprites.update()
-            spawns = [7]
+            # spawns = [7]
             if self.player.coin == 8:
                 self.show_end_screen()
             if self.player.hp <= 0:
                 self.show_death_screen()
-            if self.enemy_spawn_timer > 0:
-                self.enemy_spawn_timer -= self.dt
-            else:
-                # Spawn enemies if the timer has elapsed
-                spawns = [7]
-                if self.player.coin == 8:
+            if self.player.coin == 8:
                     self.show_end_screen()
-                if self.player.hp <= 0:
-                    self.show_death_screen()
-                while s.loaded_enemies < 3:
-                    spawn = randint(0, 5)
-                    spawns.append(spawn)
-                    if spawn == spawns[-2]:
-                        break
-                    Enemy(self, self.colrange[spawn], self.rowrange[spawn])
-                    s.loaded_enemies += 1
-                    print(s.loaded_enemies)
-                    # Reset the enemy spawn timer after spawning
-                    self.enemy_spawn_timer = self.enemy_spawn_delay
+            if self.player.hp <= 0:
+                self.show_death_screen()
             if s.inelevator == True:
                 self.change_level(LEVEL2)
                 self.level = 2
                 s.inelevator = False
+            
             if self.level == 1:
                 if self.elevator == 0:
                     if self.player.coin == 4:
