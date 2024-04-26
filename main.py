@@ -27,7 +27,6 @@ class Game:
         pg.display.set_caption(s.TITLE)
         self.running = True
         self.paused = False
-        self.loaded_enemies = 0
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
@@ -60,7 +59,7 @@ class Game:
         for sprite in self.all_sprites:
             sprite.kill()
         self.map_data = []
-        self.loaded_enemies = 0
+        s.loaded_enemies = 0
         self.colrange = []
         self.rowrange = []
 
@@ -90,8 +89,8 @@ class Game:
         for _ in range(3):
             spawn = randint(0, 5)
             Enemy(self, self.colrange[spawn], self.rowrange[spawn])
-            self.loaded_enemies += 1
-            print(self.loaded_enemies)
+            s.loaded_enemies += 1
+            print(s.loaded_enemies)
 
         
     def new(self):
@@ -132,31 +131,31 @@ class Game:
         sys.exit()
 
     def enemy_spawning(self):
-        if self.loaded_enemies < 3:
+        if s.loaded_enemies < 3:
             self.enemy_spawn_timer -= self.dt
             if self.enemy_spawn_timer <= 0:
                 spawn = randint(0, len(self.colrange)-1)
                 Enemy(self, self.colrange[spawn], self.rowrange[spawn])
-                self.loaded_enemies += 1
+                s.loaded_enemies += 1
                 print("enemy spawned")
                 self.enemy_spawn_timer = self.enemy_spawn_delay
 
     def update(self): # UPDATE EVERYTHING!!
         if not self.paused:
             self.all_sprites.update()
-            # spawns = [7]
             if self.player.coin == 8:
                 self.show_end_screen()
             if self.player.hp <= 0:
-                self.show_death_screen()
-            if self.player.coin == 8:
-                    self.show_end_screen()
-            if self.player.hp <= 0:
-                self.show_death_screen()
-            if s.inelevator == True:
+                self.show_death_screen
+            elif s.inelevator == True:
                 self.change_level(LEVEL2)
                 self.level = 2
                 s.inelevator = False
+            elif self.level == 1 and self.elevator == 0 and self.player.coin == 4:
+                Elevator(self, 30, 12)
+                self.elevator = 1
+                print("elevator spawned")
+            self.enemy_spawning()
             
             if self.level == 1:
                 if self.elevator == 0:

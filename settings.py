@@ -23,8 +23,8 @@ BLACK = (0,0,0)
 WHITE = (255,255,255)
 YELLOW = (255,255,0)
 
-# global loaded_enemies
-# loaded_enemies = 0
+global loaded_enemies
+loaded_enemies = 0
 
 global inelevator
 inelevator = False
