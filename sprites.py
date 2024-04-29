@@ -8,7 +8,8 @@ from pygame.sprite import Sprite
 import settings as s
 from os import path
 
-SPRITESHEET = "theBell.png"
+SPRITESHEET = "theBell.png" # This is the path to the spritesheet image file. It's in the images folder.
+ENEMYSHEET = "roombaSpritesheet.png"
 
 game_folder = path.dirname(__file__)
 img_folder = path.join(game_folder, 'images')
@@ -155,18 +156,33 @@ class Enemy(Sprite): # dis a copy of the other class
         Sprite.__init__(self, self.groups)
         self.game = game
         # Load the image file for the enemy
-        self.image = pg.image.load(path.join(img_folder, "roomba.png")).convert_alpha()
+        self.spritesheet = Spritesheet(path.join(img_folder, ENEMYSHEET))
+        self.load_images()
+        self.image = self.standing_frames[0]  # Set self.image to the first standing frame
         self.rect = self.image.get_rect()
         self.x = x * s.TILESIZE
         self.y = y * s.TILESIZE
-        self.rect.x = x
-        self.rect.y = y
         self.vx = s.ENEMY_SPEED
         self.vy = s.ENEMY_SPEED
         if self.vx != 0 and self.vy != 0:
             self.vx *= 0.7071               # MATH!!
             self.vy *= 0.7071
-    
+        
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32).convert_alpha(), 
+                                self.spritesheet.get_image(32,0, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(64,0, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(96,0, 32, 32).convert_alpha()]
+        
+    def animate(self):
+        if self.vx > 0 and self.vy < 0:
+            self.image = self.standing_frames[0]
+        elif self.vx < 0 and self.vy < 0:
+            self.image = self.standing_frames[1]
+        elif self.vx < 0 and self.vy > 0:
+            self.image = self.standing_frames[2]
+        elif self.vx > 0 and self.vy > 0:
+            self.image = self.standing_frames[3]
 
     def collide_with_obj(self, dir):
         if dir == 'x':
@@ -197,6 +213,7 @@ class Enemy(Sprite): # dis a copy of the other class
        self.collide_with_obj('x')
        self.rect.y = self.y 
        self.collide_with_obj('y')
+       self.animate()
 
 class Elevator(Sprite): # copy of coin class for elevator
     def __init__(self, game, x, y):
