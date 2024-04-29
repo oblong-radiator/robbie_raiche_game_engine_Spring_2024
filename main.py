@@ -146,7 +146,7 @@ class Game:
             if self.player.coin == 8:
                 self.show_end_screen()
             if self.player.hp <= 0:
-                self.show_death_screen
+                self.show_death_screen()
             elif s.inelevator == True:
                 self.change_level(LEVEL2)
                 self.level = 2
