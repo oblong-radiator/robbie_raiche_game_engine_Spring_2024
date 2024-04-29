@@ -173,6 +173,8 @@ class Enemy(Sprite): # dis a copy of the other class
                                 self.spritesheet.get_image(32,0, 32, 32).convert_alpha(),
                                 self.spritesheet.get_image(64,0, 32, 32).convert_alpha(),
                                 self.spritesheet.get_image(96,0, 32, 32).convert_alpha()]
+        for frame in self.standing_frames:
+            frame.set_colorkey((35, 214, 34))  # Set the colorkey to green screen
         
     def animate(self):
         if self.vx > 0 and self.vy < 0:
