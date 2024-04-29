@@ -17,6 +17,7 @@ img_folder = path.join(game_folder, 'images')
 class Spritesheet:
     # utility class for loading and parsing spritesheets
     def __init__(self, filename):
+        self.filename = filename
         self.spritesheet = pg.image.load(filename).convert()
 
     def get_image(self, x, y, width, height):
@@ -24,7 +25,9 @@ class Spritesheet:
         image = pg.Surface((width, height))
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
         # image = pg.transform.scale(image, (width, height))
-        image = pg.transform.scale(image, (width * 2, height * 2)) # Control the multipliers to multiply size
+        
+        if self.filename == path.join(img_folder, SPRITESHEET):
+            image = pg.transform.scale(image, (width * 2, height * 2)) # Control the multipliers to multiply size
         return image
     
 # Capitalize the class name. It's the LAW!!
