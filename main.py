@@ -15,6 +15,7 @@ import time as t
 
 LEVEL1 = "map.txt"
 LEVEL2 = "maplv2.txt"
+LEVEL3 = "maplv3.txt"
 
 # Creating the game class
 class Game:
@@ -27,6 +28,7 @@ class Game:
         pg.display.set_caption(s.TITLE)
         self.running = True
         self.paused = False
+        self.level = 1
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
@@ -46,15 +48,31 @@ class Game:
         after it is used. This can help to prevent errors and leaks.
         '''
         with open(path.join(self.game_folder, 'map.txt'), 'rt') as f:
-            self.level = 1
             for line in f:
                 # print(line)
                 self.map_data.append(line)
 
+    def elevator_spawn(self):
+        if self.level == 1 and self.player.coin == 4:
+            Elevator(self, 30, 12)
+            
+            print("elevator spawned")
+        elif self.level == 2 and self.player.coin == 8:
+            Elevator(self, 30, 12)
+            
+        if s.inelevator == True:
+            self.level += 1
+            print(self.level)
+            self.change_level(self.level)
+            s.inelevator = False
+
     def change_level(self, lvl):
         # Store current coin count
         current_coin_count = self.player.coin
-
+        if lvl == 2:
+            self.lvl = LEVEL2
+        elif lvl == 3:
+            self.lvl = LEVEL3
         # Kill all existing sprites and reset necessary attributes
         for sprite in self.all_sprites:
             sprite.kill()
@@ -64,7 +82,7 @@ class Game:
         self.rowrange = []
 
         # Load new level
-        with open(path.join(self.game_folder, lvl), 'rt') as f:
+        with open(path.join(self.game_folder, self.lvl), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
@@ -143,26 +161,12 @@ class Game:
     def update(self): # UPDATE EVERYTHING!!
         if not self.paused:
             self.all_sprites.update()
-            if self.player.coin == 8:
+            if self.player.coin == 12:
                 self.show_end_screen()
             if self.player.hp <= 0:
                 self.show_death_screen()
-            elif s.inelevator == True:
-                self.change_level(LEVEL2)
-                self.level = 2
-                s.inelevator = False
-            elif self.level == 1 and self.elevator == 0 and self.player.coin == 4:
-                Elevator(self, 30, 12)
-                self.elevator = 1
-                print("elevator spawned")
             self.enemy_spawning()
-            
-            if self.level == 1:
-                if self.elevator == 0:
-                    if self.player.coin == 4:
-                        Elevator(self,30,12)
-                        self.elevator = 1
-                        print("elevator spawned") 
+            self.elevator_spawn()
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, s.WIDTH, s.TILESIZE):
