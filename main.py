@@ -55,7 +55,6 @@ class Game:
     def elevator_spawn(self):
         if self.level == 1 and self.player.coin == 4:
             Elevator(self, 30, 12)
-            
             print("elevator spawned")
         elif self.level == 2 and self.player.coin == 8:
             Elevator(self, 30, 12)
@@ -69,6 +68,7 @@ class Game:
     def change_level(self, lvl):
         # Store current coin count
         current_coin_count = self.player.coin
+        current_hp = self.player.hp
         if lvl == 2:
             self.lvl = LEVEL2
         elif lvl == 3:
@@ -102,6 +102,7 @@ class Game:
 
         # Restore coin count
         self.player.coin = current_coin_count
+        self.player.hp = current_hp
 
         # Spawn enemies on new level
         for _ in range(3):
