@@ -104,13 +104,6 @@ class Game:
         self.player.coin = current_coin_count
         self.player.hp = current_hp
 
-        # Spawn enemies on new level
-        for _ in range(3):
-            spawn = randint(0, 5)
-            Enemy(self, self.colrange[spawn], self.rowrange[spawn])
-            s.loaded_enemies += 1
-            print(s.loaded_enemies)
-
         
     def new(self):
         print("create new game...")
