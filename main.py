@@ -34,6 +34,7 @@ class Game:
         self.load_data()
         self.enemy_spawn_delay = 5  # Delay in seconds
         self.enemy_spawn_timer = 0   # Timer for enemy spawn delay
+        self.elevator = False
 
 
     def load_data(self):
@@ -53,11 +54,15 @@ class Game:
                 self.map_data.append(line)
 
     def elevator_spawn(self):
-        if self.level == 1 and self.player.coin == 4:
+        if self.level == 1 and self.player.coin == 4 and self.elevator == False:
             Elevator(self, 30, 12)
+            Elevator(self, 30, 13)
+            self.elevator = True
             print("elevator spawned")
-        elif self.level == 2 and self.player.coin == 8:
+        elif self.level == 2 and self.player.coin == 8 and self.elevator == False:
             Elevator(self, 30, 12)
+            Elevator(self, 30, 13)
+            self.elevator = True
             
         if s.inelevator == True:
             self.level += 1
@@ -80,6 +85,7 @@ class Game:
         s.loaded_enemies = 0
         self.colrange = []
         self.rowrange = []
+        self.elevator = False
 
         # Load new level
         with open(path.join(self.game_folder, self.lvl), 'rt') as f:
@@ -181,7 +187,7 @@ class Game:
         self.draw_grid()
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, s.YELLOW, 1, 1)
-        self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, s.LIGHTGREY, 1, 3)
+        self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, s.BLACK, 1, 3)
         self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, s.WHITE, 15, 1)
         pg.display.flip()
 

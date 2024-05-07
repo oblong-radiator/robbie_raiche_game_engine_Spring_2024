@@ -132,7 +132,9 @@ class Wall(Sprite):
         self.groups = game.all_sprites, game.walls, game.collision
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((s.TILESIZE,s.TILESIZE))
+        # self.image = pg.Surface((s.TILESIZE,s.TILESIZE))
+        # self.image.fill(s.WALLCOLOR)
+        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
         self.image.fill(s.WALLCOLOR)
         self.rect = self.image.get_rect()
         self.x = x * s.TILESIZE
