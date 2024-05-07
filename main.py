@@ -188,7 +188,7 @@ class Game:
         self.all_sprites.draw(self.screen)
         self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, s.YELLOW, 1, 1)
         self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, s.BLACK, 1, 3)
-        self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, s.WHITE, 15, 1)
+        self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, s.WHITE, 15, 0)
         pg.display.flip()
 
     # define input methods
