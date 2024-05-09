@@ -32,7 +32,7 @@ class Game:
         # setting game clock 
         self.clock = pg.time.Clock()
         self.load_data()
-        self.enemy_spawn_delay = 5  # Delay in seconds
+        self.enemy_spawn_delay = 3  # Delay in seconds
         self.enemy_spawn_timer = 0   # Timer for enemy spawn delay
         self.elevator = False
 
@@ -41,7 +41,7 @@ class Game:
         self.game_folder = path.dirname(__file__)
         self.img_folder = path.join(self.game_folder, 'images')
         self.map_data = []
-        self.colrange = []
+        self.colrange = [] #list of columns for enemy spawning, could probably be in __init__ but it works here so I'm not touching it
         self.rowrange = []
         '''
         The with statement is a context manager in Python. 
@@ -53,7 +53,7 @@ class Game:
                 # print(line)
                 self.map_data.append(line)
 
-    def elevator_spawn(self):
+    def elevator_spawn(self): # elevator spawn system written by me :)
         if self.level == 1 and self.player.coin == 4 and self.elevator == False:
             Elevator(self, 30, 12)
             Elevator(self, 30, 13)
@@ -71,7 +71,7 @@ class Game:
             s.inelevator = False
 
     def change_level(self, lvl):
-        # Store current coin count
+        # Store current coin count and hp (partial copilot credit)
         current_coin_count = self.player.coin
         current_hp = self.player.hp
         if lvl == 2:
@@ -87,13 +87,13 @@ class Game:
         self.rowrange = []
         self.elevator = False
 
-        # Load new level
+        # Load new level(copilot)
         with open(path.join(self.game_folder, self.lvl), 'rt') as f:
             for line in f:
                 print(line)
                 self.map_data.append(line)
 
-        # Spawn sprites for new level
+        # Spawn sprites for new level(copilot)
         for row, tiles in enumerate(self.map_data):
             for col, tile in enumerate(tiles):
                 if tile == '1':
@@ -106,7 +106,7 @@ class Game:
                     self.colrange.append(col)
                     self.rowrange.append(row)
 
-        # Restore coin count
+        # Restore coin count(copilot, partially)
         self.player.coin = current_coin_count
         self.player.hp = current_hp
 
@@ -148,8 +148,8 @@ class Game:
         pg.quit()
         sys.exit()
 
-    def enemy_spawning(self):
-        if s.loaded_enemies < 3:
+    def enemy_spawning(self): #written by me
+        if s.loaded_enemies < 5:
             self.enemy_spawn_timer -= self.dt
             if self.enemy_spawn_timer <= 0:
                 spawn = randint(0, len(self.colrange)-1)
