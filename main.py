@@ -105,6 +105,14 @@ class Game:
                 if tile == "E":
                     self.colrange.append(col)
                     self.rowrange.append(row)
+                if tile == "5":
+                    Chair(self, col, row, "down")
+                if tile == "6":
+                    Chair(self, col, row, "left")
+                if tile == "7":
+                    Chair(self, col, row, "up")
+                if tile == "8":
+                    Chair(self, col, row, "right")
 
         # Restore coin count(copilot, partially)
         self.player.coin = current_coin_count
@@ -120,6 +128,7 @@ class Game:
         self.enemies = pg.sprite.Group()
         self.collision = pg.sprite.Group()
         self.elevators = pg.sprite.Group()
+        self.chairs = pg.sprite.Group()
         self.elevator = 0
         for row, tiles in enumerate(self.map_data): # drawing where the walls and player is at
             for col, tile in enumerate(tiles):
@@ -132,6 +141,14 @@ class Game:
                 if tile == "E":
                     self.colrange.append(col)
                     self.rowrange.append(row)
+                if tile == "5":
+                    Chair(self, col, row, "down")
+                if tile == "6":
+                    Chair(self, col, row, "right")
+                if tile == "7":
+                    Chair(self, col, row, "up")
+                if tile == "8":
+                    Chair(self, col, row, "left")
         
 
  # define the run method

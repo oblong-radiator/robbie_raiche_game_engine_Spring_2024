@@ -10,6 +10,7 @@ from os import path
 
 SPRITESHEET = "theBell.png" # This is the path to the spritesheet image file. It's in the images folder.
 ENEMYSHEET = "roombaSpritesheet.png"
+CHAIRSHEET = "office-chair.png"
 
 game_folder = path.dirname(__file__)
 img_folder = path.join(game_folder, 'images')
@@ -50,8 +51,10 @@ class Player(Sprite):
         self.last_update = 0
 
     def load_images(self):
-        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32), 
-                                self.spritesheet.get_image(32,0, 32, 32)]
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32).convert_alpha(), 
+                                self.spritesheet.get_image(32,0, 32, 32).convert_alpha()]
+        for frame in self.standing_frames:
+            frame.set_colorkey((255, 255, 255))  # Set the colorkey to white screen(copilot)
         
     def animate(self):
         now = pg.time.get_ticks()
@@ -132,8 +135,6 @@ class Wall(Sprite):
         self.groups = game.all_sprites, game.walls, game.collision
         Sprite.__init__(self, self.groups)
         self.game = game
-        # self.image = pg.Surface((s.TILESIZE,s.TILESIZE))
-        # self.image.fill(s.WALLCOLOR)
         self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
         self.image.fill(s.WALLCOLOR)
         self.rect = self.image.get_rect()
@@ -179,7 +180,7 @@ class Enemy(Sprite): # dis a copy of the other class
                                 self.spritesheet.get_image(64,0, 32, 32).convert_alpha(),
                                 self.spritesheet.get_image(96,0, 32, 32).convert_alpha()]
         for frame in self.standing_frames:
-            frame.set_colorkey((35, 214, 34))  # Set the colorkey to green screen
+            frame.set_colorkey((35, 214, 34))  # Set the colorkey to green screen(copilot)
         
     def animate(self):
         if self.vx > 0 and self.vy < 0:
@@ -235,3 +236,36 @@ class Elevator(Sprite): # copy of coin class for elevator
         self.rect.x = x * s.TILESIZE
         self.rect.y = y * s.TILESIZE
 
+class Chair(Sprite):
+    def __init__(self, game, x, y, orientation): 
+        self.groups = game.all_sprites, game.chairs
+        Sprite.__init__(self, self.groups)
+        self.orientation = orientation
+        self.game = game
+        self.spritesheet = Spritesheet(path.join(img_folder, CHAIRSHEET))
+        self.load_images()
+        self.image_select()
+        # self.image = self.standing_frames[0]
+        self.rect = self.image.get_rect()
+        self.x = x * s.TILESIZE
+        self.y = y * s.TILESIZE 
+        self.rect.x = self.x  # Set the x position of self.rect
+        self.rect.y = self.y  # Set the y position of self.rect
+        
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32).convert_alpha(), 
+                                self.spritesheet.get_image(32,0, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(64,0, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(96,0, 32, 32).convert_alpha()]
+        for frame in self.standing_frames:
+            frame.set_colorkey((255, 255, 255))
+        
+    def image_select(self):
+        if self.orientation == "down":
+            self.image = self.standing_frames[0]
+        elif self.orientation == "left":
+            self.image = self.standing_frames[1]
+        elif self.orientation == "up":
+            self.image = self.standing_frames[2]
+        elif self.orientation == "right":
+            self.image = self.standing_frames[3]
