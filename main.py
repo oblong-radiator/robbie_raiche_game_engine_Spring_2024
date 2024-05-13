@@ -144,11 +144,11 @@ class Game:
                 if tile == "5":
                     Chair(self, col, row, "down")
                 if tile == "6":
-                    Chair(self, col, row, "right")
+                    Chair(self, col, row, "left")
                 if tile == "7":
                     Chair(self, col, row, "up")
                 if tile == "8":
-                    Chair(self, col, row, "left")
+                    Chair(self, col, row, "right")
         
 
  # define the run method
