@@ -295,7 +295,7 @@ class Game:
                 # if event.type == pg.KEYUP:
                 #     if event.key == pg.K_r:
                 #         self.paused = False
-                #         waiting = False
+                #         waiting =w False
                 #         for s in self.all_sprites:
                 #             s.kill()
                 #         g.new()

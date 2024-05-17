@@ -28,7 +28,7 @@ class Spritesheet:
         # image = pg.transform.scale(image, (width, height))
         
         if self.filename == path.join(img_folder, SPRITESHEET):
-            image = pg.transform.scale(image, (width * 2, height * 2)) # Control the multipliers to multiply size
+            image = pg.transform.scale(image, (width * 1.5, height * 1.5)) # Control the multipliers to multiply size
         return image
     
 # Capitalize the class name. It's the LAW!!
