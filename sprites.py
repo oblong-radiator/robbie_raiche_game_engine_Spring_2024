@@ -8,7 +8,7 @@ from pygame.sprite import Sprite
 import settings as s
 from os import path
 
-SPRITESHEET = "theBell.png" # This is the path to the spritesheet image file. It's in the images folder.
+SPRITESHEET = "Janitor.png" # This is the path to the spritesheet image file. It's in the images folder.
 ENEMYSHEET = "roombaSpritesheet.png"
 CHAIRSHEET = "office-chair.png"
 
@@ -53,16 +53,48 @@ class Player(Sprite):
     def load_images(self):
         self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32).convert_alpha(), 
                                 self.spritesheet.get_image(32,0, 32, 32).convert_alpha()]
-        for frame in self.standing_frames:
-            frame.set_colorkey((255, 255, 255))  # Set the colorkey to white screen(copilot)
-        
+        self.rightwalk_frames = [self.spritesheet.get_image(0,32, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(32,32, 32, 32).convert_alpha(),]
+        self.leftwalk_frames = [self.spritesheet.get_image(0,64, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(32,64, 32, 32).convert_alpha()]
+        for frame in self.standing_frames + self.rightwalk_frames + self.leftwalk_frames:
+            frame.set_colorkey((117, 249, 77))  # Set the colorkey to green screen(copilot)
+
     def animate(self):
         now = pg.time.get_ticks()
-        if now - self.last_update > 350:
+        if self.vx > 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.rightwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.rightwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx == 0 and self.vy < 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.rightwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.rightwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx < 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.leftwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.leftwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif now - self.last_update > 350 and self.vx == 0 and self.vy == 0:
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
             bottom = self.rect.bottom
             self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx == 0 and self.vy > 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.leftwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.leftwalk_frames[self.current_frame]
             self.rect = self.image.get_rect()
             self.rect.bottom = bottom
     
@@ -148,8 +180,8 @@ class Coin(Sprite): # dis a copy of the wall class
         self.groups = game.all_sprites, game.coins
         Sprite.__init__(self, self.groups)
         self.game = game
-        self.image = pg.Surface((s.TILESIZE, s.TILESIZE))
-        self.image.fill(s.COINCOLOR)
+        self.image = pg.image.load(path.join(img_folder, 'wet_floor.png')).convert_alpha()
+        self.image.set_colorkey((255, 255, 255))
         self.rect = self.image.get_rect()
         self.x = x
         self.y = y
