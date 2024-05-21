@@ -113,6 +113,8 @@ class Game:
                     Chair(self, col, row, "up")
                 if tile == "8":
                     Chair(self, col, row, "right")
+                if tile == "B":
+                    Boss(self, col, row)
 
         # Restore coin count(copilot, partially)
         self.player.coin = current_coin_count
@@ -149,6 +151,8 @@ class Game:
                     Chair(self, col, row, "up")
                 if tile == "8":
                     Chair(self, col, row, "right")
+                if tile == "B":
+                    Boss(self, col, row)
         
 
  # define the run method
@@ -203,7 +207,7 @@ class Game:
         self.screen.fill(s.BGCOLOR)
         self.draw_grid()
         self.all_sprites.draw(self.screen)
-        self.draw_text(self.screen, "COIN: " + str(self.player.coin), 64, s.YELLOW, 1, 1)
+        self.draw_text(self.screen, "MOP: " + str(self.player.coin), 64, s.YELLOW, 1, 1)
         self.draw_text(self.screen, "HP: " + str(self.player.hp), 64, s.BLACK, 1, 3)
         self.draw_text(self.screen, "TIME: " + str(floor((pg.time.get_ticks())/1000)), 32, s.WHITE, 15, 0)
         pg.display.flip()
@@ -224,8 +228,8 @@ class Game:
 
     def show_start_screen(self): #startup screen function
         self.screen.fill(s.BGCOLOR)
-        self.draw_text(self.screen, "Collect all coins and avoid the bouncing enemies to win. Press P to pause at any time.", 24, s.WHITE, 5, 8)
-        self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.WHITE, 10, 10)
+        self.draw_text(self.screen, "Mop up the mess in the office and avoid stepping on the roombas. Press P to pause at any time.", 24, s.WHITE, 5, 8)
+        self.draw_text(self.screen, "This is the start screen - press any key to play", 24, s.BLACK, 10, 10)
         pg.display.flip()
         self.start_screen_events()
 
@@ -253,7 +257,7 @@ class Game:
     def start_screen_events(self): # conditions for startup screen
         waiting = True
         while waiting:
-            self.clock.tick(s.FPS)
+            # self.clock.tick(s.FPS)
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     waiting = False

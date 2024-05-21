@@ -8,6 +8,7 @@ from pygame.sprite import Sprite
 import settings as s
 from os import path
 
+BOSSSHEET = "Boss.png"
 SPRITESHEET = "Janitor.png" # This is the path to the spritesheet image file. It's in the images folder.
 ENEMYSHEET = "roombaSpritesheet.png"
 CHAIRSHEET = "office-chair.png"
@@ -27,7 +28,7 @@ class Spritesheet:
         image.blit(self.spritesheet, (0, 0), (x, y, width, height))
         # image = pg.transform.scale(image, (width, height))
         
-        if self.filename == path.join(img_folder, SPRITESHEET):
+        if self.filename == path.join(img_folder, SPRITESHEET) or self.filename == path.join(img_folder, BOSSSHEET):
             image = pg.transform.scale(image, (width * 1.5, height * 1.5)) # Control the multipliers to multiply size
         return image
     
@@ -144,6 +145,8 @@ class Player(Sprite):
                 print(s.loaded_enemies)
             if str(hits[0].__class__.__name__) == "Elevator":
                 s.inelevator = True
+            if str(hits[0].__class__.__name__) == "Boss":
+                self.hp -= 5
                 
            
     def update(self):
@@ -301,3 +304,109 @@ class Chair(Sprite):
             self.image = self.standing_frames[2]
         elif self.orientation == "right":
             self.image = self.standing_frames[3]
+
+class Boss(Sprite): # Similar to enemy class but with different spritesheet
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.enemies
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        # Load the image file for the enemy
+        self.spritesheet = Spritesheet(path.join(img_folder, BOSSSHEET))
+        self.load_images()
+        self.image = self.standing_frames[0]  # Set self.image to the first standing frame
+        self.rect = self.image.get_rect()
+        self.x = x * s.TILESIZE
+        self.y = y * s.TILESIZE
+        self.vx, self.vy = 100, 100
+        self.current_frame = 0
+        self.last_update = 0
+        
+        
+    def load_images(self):
+        self.standing_frames = [self.spritesheet.get_image(0,0, 32, 32).convert_alpha(), 
+                                self.spritesheet.get_image(32,0, 32, 32).convert_alpha()]
+        self.rightwalk_frames = [self.spritesheet.get_image(0,32, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(32,32, 32, 32).convert_alpha(),]
+        self.leftwalk_frames = [self.spritesheet.get_image(0,64, 32, 32).convert_alpha(),
+                                self.spritesheet.get_image(32,64, 32, 32).convert_alpha()]
+        for frame in self.standing_frames + self.rightwalk_frames + self.leftwalk_frames:
+            frame.set_colorkey((117, 249, 77))  # Set the colorkey to green screen(copilot)
+
+    def animate(self):
+        now = pg.time.get_ticks()
+        if self.vx > 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.rightwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.rightwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx == 0 and self.vy < 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.rightwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.rightwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx < 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.leftwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.leftwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif now - self.last_update > 350 and self.vx == 0 and self.vy == 0:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
+            bottom = self.rect.bottom
+            self.image = self.standing_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+        elif self.vx == 0 and self.vy > 0 and now - self.last_update > 100:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.leftwalk_frames)
+            bottom = self.rect.bottom
+            self.image = self.leftwalk_frames[self.current_frame]
+            self.rect = self.image.get_rect()
+            self.rect.bottom = bottom
+
+    def collide_with_obj(self, dir):
+        if dir == 'x':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False) # self.game.collision includes walls and player for player bounce
+            if hits:
+                if self.vx > 0:
+                    self.x = hits[0].rect.left - self.rect.width
+                if self.vx <0:
+                    self.x = hits[0].rect.right
+                self.vx = -self.vx
+                self.rect.x = self.x
+        if dir == 'y':
+            hits = pg.sprite.spritecollide(self, self.game.walls, False)
+            if hits:
+                if self.vy > 0:
+                    self.y = hits[0].rect.top - self.rect.width
+                if self.vy <0:
+                    self.y = hits[0].rect.bottom
+                self.vy = -self.vy
+                self.rect.y = self.y
+    def chasing(self):
+        if self.rect.x < self.game.player.rect.x:
+            self.vx = 70
+        if self.rect.x > self.game.player.rect.x:
+            self.vx = -70    
+        if self.rect.y < self.game.player.rect.y:
+            self.vy = 70
+        if self.rect.y > self.game.player.rect.y:
+            self.vy = -70
+
+    def update(self):
+        # self.rect.x = self.x * TILESIZE
+        # self.rect.y =  self.y * TILESIZE
+        self.chasing()
+        self.x += self.vx * self.game.dt
+        self.y += self.vy * self.game.dt
+        self.rect.x = self.x
+        self.collide_with_obj('x')
+        self.rect.y = self.y 
+        self.collide_with_obj('y')
+        self.animate()
