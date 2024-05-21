@@ -4,6 +4,7 @@
 
 # My first source control edit!!1!!1!!
 # Import stuff
+import webbrowser
 from random import randint
 import sys
 import pygame as pg
@@ -188,6 +189,14 @@ class Game:
                 self.show_death_screen()
             self.enemy_spawning()
             self.elevator_spawn()
+    
+    def play_youtube_video(self, url):
+        try:
+            webbrowser.open(url)
+            print(f"Playing YouTube video: {url}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
 
     def draw_grid(self): # draw the grid with the tile size from settings
         for x in range(0, s.WIDTH, s.TILESIZE):
@@ -280,6 +289,7 @@ class Game:
 
     def win_screen_events(self): # events for win screen
         waiting = True
+        self.play_youtube_video("https://www.youtube.com/watch?v=gWOXSh4-Iuc&list=PLOl4b517qn8gGHJsT77-O3xHL46d9SiwH")
         while waiting:
             self.clock.tick(s.FPS)
             self.paused = True
